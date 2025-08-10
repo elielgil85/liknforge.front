@@ -32,8 +32,8 @@ export async function POST(req: Request) {
 
     urlMap.set(shortCode, longUrl);
 
-    const domain = req.headers.get('host') || 'linkforge.co';
-    const shortUrl = `${req.headers.get('x-forwarded-proto') || 'http'}://${domain}/${shortCode}`;
+    const domain = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:9002';
+    const shortUrl = `${domain}/${shortCode}`;
 
     return NextResponse.json({shortUrl, originalUrl: longUrl});
   } catch (error) {
