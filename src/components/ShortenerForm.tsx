@@ -48,14 +48,32 @@ export default function ShortenerForm() {
     setIsLoading(true);
     setResult(null);
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const response = await fetch('/api/shorten', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
 
-    const randomString = Math.random().toString(36).substring(2, 8);
-    const shortUrl = `linkforge.co/${randomString}`;
+      if (!response.ok) {
+        throw new Error('Falha ao encurtar a URL.');
+      }
 
-    setResult({ shortUrl, originalUrl: values.url });
-    setIsLoading(false);
-    form.reset();
+      const data: ShortenedData = await response.json();
+      setResult(data);
+      form.reset();
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: 'destructive',
+        title: 'Oops! Algo deu errado.',
+        description: 'Não foi possível encurtar o seu link. Por favor, tente novamente.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCopy = () => {
@@ -144,7 +162,7 @@ export default function ShortenerForm() {
             <CardContent className="space-y-4">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-muted/50 rounded-lg border">
                 <a
-                  href={`https://${result.shortUrl}`}
+                  href={result.shortUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="font-semibold text-lg hover:underline break-all text-accent-foreground"
