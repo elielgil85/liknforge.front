@@ -11,11 +11,10 @@ type Props = {
 
 async function getLongUrlFromBackend(shortCode: string): Promise<string | null> {
   try {
-    // Construct the full URL for the API endpoint using the app's public URL
-    // This ensures the request goes through the Next.js server, which will proxy it to the backend.
-    const apiUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/backend/${shortCode}?json=true`;
+    // The backend redirect page needs to query the backend for the long URL.
+    // It asks for `json=true` so the backend returns the data instead of trying to redirect itself.
+    const apiUrl = `http://localhost:3001/${shortCode}?json=true`;
     
-    // We ask for json=true so the backend returns the data instead of redirecting
     const res = await fetch(apiUrl, { cache: 'no-store' });
 
     if (res.status === 404) {
@@ -24,7 +23,7 @@ async function getLongUrlFromBackend(shortCode: string): Promise<string | null> 
 
     if (!res.ok) {
       // Log the error and return null if something went wrong
-      console.error(`Backend error for ${shortCode}: ${res.statusText}`);
+      console.error(`Backend error for ${shortCode}: ${res.status} ${await res.text()}`);
       return null;
     }
 

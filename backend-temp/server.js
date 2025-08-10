@@ -7,6 +7,13 @@ const cors = require('cors');
 // Load environment variables
 dotenv.config();
 
+// --- CORS Configuration ---
+const corsOptions = {
+  origin: 'https://6000-firebase-studio-1754856280835.cluster-iesosxm5fzdewqvhlwn5qivgry.cloudworkstations.dev',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
+
 // --- Database Connection ---
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('Successfully connected to MongoDB Atlas.'))
@@ -23,7 +30,7 @@ const Url = mongoose.model('Url', urlSchema);
 
 // --- Express App Setup ---
 const app = express();
-app.use(cors()); // Enable Cross-Origin Resource Sharing
+app.use(cors(corsOptions)); // Enable Cross-Origin Resource Sharing with specific options
 app.use(express.json()); // Middleware to parse JSON bodies
 
 // --- Helper Function ---

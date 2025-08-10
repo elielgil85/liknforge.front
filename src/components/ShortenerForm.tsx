@@ -49,6 +49,7 @@ export default function ShortenerForm() {
     setResult(null);
 
     try {
+      // Use the absolute URL to the backend, which is running on port 3001
       const response = await fetch('http://localhost:3001/shorten', {
         method: 'POST',
         headers: {
@@ -58,12 +59,13 @@ export default function ShortenerForm() {
       });
 
       if (!response.ok) {
-        throw new Error('Falha ao encurtar a URL.');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Falha ao encurtar a URL.');
       }
 
       const data = await response.json();
       
-      // Use the frontend domain from environment variables
+      // The short URL should be built using the FRONTEND domain
       const frontendDomain = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
       const shortUrl = `${frontendDomain}/${data.short_code}`;
 
@@ -74,10 +76,11 @@ export default function ShortenerForm() {
       form.reset();
     } catch (error) {
       console.error(error);
+      const errorMessage = error instanceof Error ? error.message : 'Não foi possível encurtar o seu link. Por favor, tente novamente.';
       toast({
         variant: 'destructive',
         title: 'Oops! Algo deu errado.',
-        description: 'Não foi possível encurtar o seu link. Por favor, tente novamente.',
+        description: errorMessage,
       });
     } finally {
       setIsLoading(false);
