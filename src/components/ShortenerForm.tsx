@@ -49,20 +49,26 @@ export default function ShortenerForm() {
     setResult(null);
 
     try {
-      const response = await fetch('/api/shorten', {
+      const response = await fetch('http://localhost:3001/shorten', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ long_url: values.url }),
       });
 
       if (!response.ok) {
         throw new Error('Falha ao encurtar a URL.');
       }
 
-      const data: ShortenedData = await response.json();
-      setResult(data);
+      const data = await response.json();
+      const backendDomain = 'http://localhost:3001';
+      const shortUrl = `${backendDomain}/${data.short_code}`;
+
+      setResult({
+        shortUrl: shortUrl,
+        originalUrl: values.url
+      });
       form.reset();
     } catch (error) {
       console.error(error);
