@@ -2,14 +2,12 @@
 
 import {NextResponse} from 'next/server';
 import {z} from 'zod';
+import { saveUrl, getLongUrl as getStoredLongUrl } from '@/lib/url-store';
+
 
 const shortUrlSchema = z.object({
   url: z.string().url(),
 });
-
-// For demonstration purposes, we'll store URLs in memory.
-// In a production app, you would use a database.
-const urlMap = new Map<string, string>();
 
 export async function POST(req: Request) {
   try {
@@ -30,7 +28,7 @@ export async function POST(req: Request) {
     
     // In a real app, you'd check for collisions here.
 
-    urlMap.set(shortCode, longUrl);
+    saveUrl(shortCode, longUrl);
 
     const domain = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:9002';
     const shortUrl = `${domain}/${shortCode}`;
@@ -47,5 +45,5 @@ export async function POST(req: Request) {
 
 // This function is not exposed via an endpoint, but would be used by the redirect page.
 export async function getLongUrl(shortCode: string): Promise<string | null> {
-    return urlMap.get(shortCode) || null;
+    return getStoredLongUrl(shortCode);
 }

@@ -1,6 +1,6 @@
 
 'use server';
-import { getLongUrl } from '@/app/api/shorten/route';
+import { getLongUrl } from '@/lib/url-store';
 import { redirect } from 'next/navigation';
 
 type Props = {
