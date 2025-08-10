@@ -40,6 +40,70 @@ function generateShortCode(length = 6) {
 // --- API Routes ---
 
 /**
+ * @route GET /
+ * @description Shows a simple status page for the API.
+ * @access Public
+ */
+app.get('/', (req, res) => {
+  res.status(200).send(`
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>API LinkForge</title>
+      <style>
+        body { 
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+          display: flex; 
+          justify-content: center; 
+          align-items: center; 
+          height: 100vh; 
+          margin: 0; 
+          background-color: #f0f2f5; 
+          color: #333; 
+        }
+        .container { 
+          text-align: center; 
+          padding: 50px; 
+          background-color: white; 
+          border-radius: 12px; 
+          box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+          border: 1px solid #e0e0e0;
+        }
+        h1 { 
+          font-size: 2.8em; 
+          color: #0d6efd; 
+          margin-bottom: 0.5em; 
+        }
+        p { 
+          font-size: 1.3em; 
+          color: #555; 
+        }
+        .status {
+          display: inline-block;
+          margin-top: 1em;
+          padding: 10px 20px;
+          background-color: #198754;
+          color: white;
+          font-weight: bold;
+          border-radius: 50px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1>API LinkForge</h1>
+        <p>O serviço de back-end está operando.</p>
+        <div class="status">API Funcional</div>
+      </div>
+    </body>
+    </html>
+  `);
+});
+
+
+/**
  * @route POST /shorten
  * @description Creates a short URL for a given long URL.
  * @access Public
