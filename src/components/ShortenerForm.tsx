@@ -49,8 +49,8 @@ export default function ShortenerForm() {
     setResult(null);
 
     try {
-      // Use the absolute URL to the backend, which is running on port 3001
-      const response = await fetch('http://localhost:3001/shorten', {
+      // Use the relative path which will be proxied by Next.js
+      const response = await fetch('/api/backend/shorten', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -65,7 +65,6 @@ export default function ShortenerForm() {
 
       const data = await response.json();
       
-      // The short URL should be built using the FRONTEND domain
       const frontendDomain = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
       const shortUrl = `${frontendDomain}/${data.short_code}`;
 

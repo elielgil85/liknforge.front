@@ -8,11 +8,7 @@ const cors = require('cors');
 dotenv.config();
 
 // --- CORS Configuration ---
-const corsOptions = {
-  origin: 'https://6000-firebase-studio-1754856280835.cluster-iesosxm5fzdewqvhlwn5qivgry.cloudworkstations.dev',
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
-
+// No longer needed with Next.js proxy
 
 // --- Database Connection ---
 mongoose.connect(process.env.MONGODB_URI)
@@ -30,7 +26,7 @@ const Url = mongoose.model('Url', urlSchema);
 
 // --- Express App Setup ---
 const app = express();
-app.use(cors(corsOptions)); // Enable Cross-Origin Resource Sharing with specific options
+app.use(cors()); // Using basic cors for simplicity, can be locked down if needed.
 app.use(express.json()); // Middleware to parse JSON bodies
 
 // --- Helper Function ---

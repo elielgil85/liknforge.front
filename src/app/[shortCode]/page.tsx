@@ -11,10 +11,10 @@ type Props = {
 
 async function getLongUrlFromBackend(shortCode: string): Promise<string | null> {
   try {
-    // The backend redirect page needs to query the backend for the long URL.
-    // It asks for `json=true` so the backend returns the data instead of trying to redirect itself.
-    const apiUrl = `http://localhost:3001/${shortCode}?json=true`;
+    // This URL needs to be absolute for the server-side fetch to work with the proxy.
+    const apiUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/backend/${shortCode}?json=true`;
     
+    // We ask for json=true so the backend returns the data instead of redirecting
     const res = await fetch(apiUrl, { cache: 'no-store' });
 
     if (res.status === 404) {
