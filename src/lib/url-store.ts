@@ -1,8 +1,9 @@
+// This file is no longer used for the primary logic since we are using a dedicated backend.
+// It is kept for reference or future use if needed.
+
 import fs from 'fs/promises';
 import path from 'path';
 
-// Em um ambiente de produção, use um banco de dados de verdade.
-// O acesso ao sistema de arquivos em ambientes serverless pode ser inconsistente.
 const dbPath = path.join(process.cwd(), 'links.json');
 
 type UrlMap = {
@@ -14,7 +15,7 @@ async function readDb(): Promise<UrlMap> {
     const data = await fs.readFile(dbPath, 'utf-8');
     return JSON.parse(data);
   } catch (error) {
-    // Se o arquivo não existir, retorna uma estrutura vazia.
+    // If the file does not exist, return an empty structure.
     return { links: {} };
   }
 }

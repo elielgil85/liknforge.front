@@ -62,8 +62,10 @@ export default function ShortenerForm() {
       }
 
       const data = await response.json();
-      const backendDomain = 'http://localhost:3001';
-      const shortUrl = `${backendDomain}/${data.short_code}`;
+      
+      // Use the frontend domain from environment variables
+      const frontendDomain = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+      const shortUrl = `${frontendDomain}/${data.short_code}`;
 
       setResult({
         shortUrl: shortUrl,

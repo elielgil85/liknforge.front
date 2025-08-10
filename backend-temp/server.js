@@ -84,24 +84,30 @@ app.post('/shorten', async (req, res) => {
 /**
  * @route GET /:shortCode
  * @description Redirects to the original URL associated with the short code.
+ * If a 'json=true' query param is present, it returns the data as JSON instead.
  * @access Public
  */
 app.get('/:shortCode', async (req, res) => {
   const { shortCode } = req.params;
+  const { json } = req.query;
 
   try {
     const urlEntry = await Url.findOne({ short_code: shortCode });
 
     if (urlEntry) {
-      // Redirect to the original URL
+      // If the client (our Next.js server) asks for JSON, send it.
+      if (json === 'true') {
+        return res.status(200).json({ long_url: urlEntry.original_url });
+      }
+      // Otherwise, perform the redirect for external users.
       return res.redirect(301, urlEntry.original_url);
     } else {
       // If the short code is not found, send a 404 response
       return res.status(404).json({ error: 'Short URL not found.' });
     }
   } catch (error) {
-    console.error('Error redirecting:', error);
-    res.status(500).json({ error: 'Server error while redirecting.' });
+    console.error('Error handling short code:', error);
+    res.status(500).json({ error: 'Server error.' });
   }
 });
 
