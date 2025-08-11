@@ -53,7 +53,4 @@ export async function POST(req: Request) {
   }
 }
 
-// This function is not exposed via an endpoint, but would be used by the redirect page.
-export async function getLongUrl(shortCode: string): Promise<string | null> {
-    return getStoredLongUrl(shortCode);
-}
+
