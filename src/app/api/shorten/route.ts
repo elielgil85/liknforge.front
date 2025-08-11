@@ -2,8 +2,7 @@
 
 import {NextResponse} from 'next/server';
 import {z} from 'zod';
-import { saveUrl, getLongUrl as getStoredLongUrl } from '@/lib/url-store';
-
+import { BACKEND_URL } from '@/constants/api';
 
 const shortUrlSchema = z.object({
   url: z.string().url(),
@@ -23,15 +22,26 @@ export async function POST(req: Request) {
 
     const {url: longUrl} = parsed.data;
 
-    // Generate a short code
-    const shortCode = Math.random().toString(36).substring(2, 8);
-    
-    // In a real app, you'd check for collisions here.
+    const response = await fetch(`${BACKEND_URL}/shorten`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ long_url: longUrl }),
+    });
 
-    saveUrl(shortCode, longUrl);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Backend error: ${response.status} ${errorText}`);
+      return NextResponse.json(
+        {error: 'Erro ao encurtar a URL.'},
+        {status: response.status}
+      );
+    }
 
+    const data = await response.json();
     const domain = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:9002';
-    const shortUrl = `${domain}/${shortCode}`;
+    const shortUrl = `${domain}/${data.short_code}`;
 
     return NextResponse.json({shortUrl, originalUrl: longUrl});
   } catch (error) {

@@ -50,7 +50,7 @@ export default function ShortenerForm() {
 
     try {
       // Use the relative path which will be proxied by Next.js
-      const response = await fetch('/api/backend/shorten', {
+      const response = await fetch('/api/shorten', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

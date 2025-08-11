@@ -9,14 +9,12 @@ type Props = {
   };
 };
 
+import { BACKEND_URL } from '@/constants/api';
+
 async function getLongUrlFromBackend(shortCode: string): Promise<string | null> {
   try {
-    // Construct the full URL for the server-side fetch.
-    // This needs to be an absolute URL that the Next.js server can resolve.
-    // Since both frontend and backend run in the same environment, `localhost` works for server-to-server communication.
-    // The `rewrites` in `next.config.ts` handles this.
-    const apiUrl = `http://localhost:3001/${shortCode}`;
-    
+    const apiUrl = `${BACKEND_URL}/${shortCode}`;
+
     const res = await fetch(apiUrl, { cache: 'no-store' });
 
     if (res.status === 404) {
