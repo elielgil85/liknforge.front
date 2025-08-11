@@ -58,14 +58,13 @@ export default function ShortenerForm() {
         body: JSON.stringify({ long_url: values.url }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Falha ao encurtar a URL.');
-      }
-
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Falha ao encurtar a URL.');
+      }
       
-      const frontendDomain = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+      const frontendDomain = window.location.origin;
       const shortUrl = `${frontendDomain}/${data.short_code}`;
 
       setResult({
