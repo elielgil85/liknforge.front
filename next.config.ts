@@ -22,7 +22,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/backend/:path*',
-        destination: 'http://localhost:3001/:path*',
+        destination: 'https://liknforge-back.onrender.com/:path*',
       },
     ]
   },
