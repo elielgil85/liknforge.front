@@ -7,9 +7,6 @@ const cors = require('cors');
 // Load environment variables
 dotenv.config();
 
-// --- CORS Configuration ---
-// No longer needed with Next.js proxy
-
 // --- Database Connection ---
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('Successfully connected to MongoDB Atlas.'))
@@ -151,16 +148,11 @@ app.post('/shorten', async (req, res) => {
 /**
  * @route GET /:shortCode
  * @description Retrieves the original URL associated with the short code.
- *              Always returns JSON. The frontend is responsible for redirection.
+ *              This endpoint always returns JSON. The frontend is responsible for redirection.
  * @access Public
  */
 app.get('/:shortCode', async (req, res) => {
   const { shortCode } = req.params;
-
-  // This check prevents treating requests for favicon or other assets as short codes
-  if (shortCode.includes('.')) {
-      return res.status(404).json({ error: 'Not a valid short code.' });
-  }
 
   try {
     const urlEntry = await Url.findOne({ short_code: shortCode });

@@ -11,8 +11,11 @@ type Props = {
 
 async function getLongUrlFromBackend(shortCode: string): Promise<string | null> {
   try {
-    // Construct the full URL for the server-side fetch to use the Next.js proxy
-    const apiUrl = new URL(`/api/backend/${shortCode}`, process.env.NEXT_PUBLIC_APP_URL).toString();
+    // Construct the full URL for the server-side fetch.
+    // This needs to be an absolute URL that the Next.js server can resolve.
+    // Since both frontend and backend run in the same environment, `localhost` works for server-to-server communication.
+    // The `rewrites` in `next.config.ts` handles this.
+    const apiUrl = `http://localhost:3001/${shortCode}`;
     
     const res = await fetch(apiUrl, { cache: 'no-store' });
 
@@ -31,6 +34,7 @@ async function getLongUrlFromBackend(shortCode: string): Promise<string | null> 
     return data.long_url || null;
 
   } catch (error) {
+    // This catch block is important for network errors (e.g., backend is down).
     console.error('Failed to fetch from backend:', error);
     return null;
   }
@@ -47,5 +51,6 @@ export default async function ShortCodeRedirectPage({ params }: Props) {
     notFound();
   }
 
+  // This part is never reached because of redirect() or notFound()
   return null;
 }

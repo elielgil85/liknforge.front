@@ -64,6 +64,7 @@ export default function ShortenerForm() {
         throw new Error(data.error || 'Falha ao encurtar a URL.');
       }
       
+      // The frontend domain is this application's public URL
       const frontendDomain = window.location.origin;
       const shortUrl = `${frontendDomain}/${data.short_code}`;
 
