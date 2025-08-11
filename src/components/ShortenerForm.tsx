@@ -59,6 +59,7 @@ export default function ShortenerForm() {
       });
 
       const data = await response.json();
+      console.log('Resposta da API recebida no frontend:', data);
 
       if (!response.ok) {
         throw new Error(data.error || 'Falha ao encurtar a URL.');
@@ -68,10 +69,12 @@ export default function ShortenerForm() {
       const frontendDomain = window.location.origin;
       const shortUrl = `${frontendDomain}/${data.short_code}`;
 
+      console.log('Valor de data.shortUrl antes de setResult:', data.shortUrl);
       setResult({
-        shortUrl: shortUrl,
-        originalUrl: values.url
+        shortUrl: String(data.shortUrl),
+        originalUrl: data.originalUrl
       });
+      console.log('Estado result após setResult (pode ser o anterior):', result);
       form.reset();
     } catch (error) {
       console.error(error);
@@ -180,6 +183,7 @@ export default function ShortenerForm() {
                 >
                   {result.shortUrl}
                 </a>
+                
                 <div className="flex gap-2 shrink-0">
                   <Button
                     variant="outline"

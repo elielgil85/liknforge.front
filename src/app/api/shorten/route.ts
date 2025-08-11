@@ -5,7 +5,7 @@ import {z} from 'zod';
 import { BACKEND_URL } from '@/constants/api';
 
 const shortUrlSchema = z.object({
-  url: z.string().url(),
+  long_url: z.string().url(),
 });
 
 export async function POST(req: Request) {
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const {url: longUrl} = parsed.data;
+    const {long_url: longUrl} = parsed.data;
 
     const response = await fetch(`${BACKEND_URL}/shorten`, {
       method: 'POST',
