@@ -20,16 +20,20 @@ O backend expõe duas rotas principais que o frontend utilizará.
 
 -   **Endpoint no Frontend:** `POST /api/backend/shorten`
 -   **Funcionalidade:** Recebe uma URL longa e retorna um código curto para ela.
--   **Corpo da Requisição (Request Body):** A requisição deve ser do tipo `application/json` com a seguinte estrutura:
+-   **Corpo da Requisição (Request Body): A requisição deve ser do tipo `application/json` com a seguinte estrutura:**
     ```json
     {
-      "long_url": "https://sua-url-longa-aqui.com"
+      "long_url": "https://sua-url-longa-aqui.com",
+      "expires_in": "7d" // Opcional: Duração da validade do link (ex: "1h", "24h", "7d", "30d")
     }
     ```
--   **Resposta de Sucesso (200 OK):** Um objeto JSON contendo o código curto gerado.
+    Se `expires_in` não for fornecido, o link não terá uma data de expiração e será permanente.
+
+-   **Resposta de Sucesso (201 Created):** Um objeto JSON contendo o código curto gerado. Se a expiração foi especificada, incluirá o campo `expires_at` (formato ISO 8601).
     ```json
     {
-      "short_code": "aB1cD2e"
+      "short_code": "aB1cD2e",
+      "expires_at": "2025-11-10T12:00:00.000Z" // Exemplo de data de expiração
     }
     ```
 -   **Lógica no Frontend:** Após receber a resposta, o frontend deve montar a URL final para o usuário, combinando seu próprio domínio com o `short_code` recebido. Por exemplo: `https://<dominio-do-frontend>/aB1cD2e`.
@@ -54,3 +58,23 @@ O backend expõe duas rotas principais que o frontend utilizará.
     }
     ```
 -   **Lógica no Frontend:** A página de redirecionamento (`src/app/[shortCode]/page.tsx`) deve chamar este endpoint. Se receber uma resposta de sucesso, ela deve usar o `long_url` para redirecionar o usuário com `redirect(long_url)`. Se receber um erro, deve acionar a página 404 do Next.js com `notFound()`.
+
+---
+
+### 3. Endpoint: GET /:shortCode (Recuperação de Links)
+
+*   **Verificação de Expiração:**
+    *   Ao acessar um link curto via GET /:shortCode, o backend verificará automaticamente se o link possui uma data de expiração (`expires_at`) e se essa data já passou.
+
+*   **Comportamento para Links Expirados:**
+    *   Se o link estiver expirado, o backend retornará um status `410 Gone` (Indisponível) com uma mensagem de erro.
+    *   Exemplo de Resposta para Link Expirado:
+        ```json
+        {
+          "error": "Short URL has expired."
+        }
+        ```
+    *   O frontend deve tratar este status 410 e a mensagem de erro para informar o usuário adequadamente (ex: "Este link não está mais ativo").
+
+*   **Comportamento para Links Válidos:**
+    *   Se o link for encontrado e não estiver expirado, o backend retornará a `long_url` original com status 200 OK, como antes.
